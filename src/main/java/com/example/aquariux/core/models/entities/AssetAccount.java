@@ -15,6 +15,7 @@ public class AssetAccount {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long assetAccountId;
 
+    private long userAccountId;
     private long assetId;
     private double quantity;
 

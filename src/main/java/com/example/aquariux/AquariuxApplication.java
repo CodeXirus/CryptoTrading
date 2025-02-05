@@ -1,10 +1,8 @@
 package com.example.aquariux;
 
-import com.example.aquariux.core.models.entities.Asset;
-import com.example.aquariux.core.models.entities.Market;
+import com.example.aquariux.core.models.entities.*;
 import com.example.aquariux.core.models.markets.MarketType;
-import com.example.aquariux.core.repositories.AssetRepository;
-import com.example.aquariux.core.repositories.MarketRepository;
+import com.example.aquariux.core.repositories.*;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -23,7 +21,11 @@ public class AquariuxApplication {
 	}
 
 	@Bean
-	CommandLineRunner initDatabase(AssetRepository assetRepository, MarketRepository marketRepository) {
+	CommandLineRunner initDatabase(AssetRepository assetRepository,
+								   MarketRepository marketRepository,
+								   UserAccountRepository userAccountRepository,
+								   WalletRepository walletRepository,
+								   AssetAccountRepository assetAccountRepository) {
 		return args -> {
 			List<Asset> assetList = generateTestAssets();
 			for (Asset asset : assetList) {
@@ -34,6 +36,23 @@ public class AquariuxApplication {
 			for (Market market : marketList) {
 				marketRepository.save(market);
 			}
+			Asset usdt = assetRepository.findBySymbol("USDT");
+			UserAccount user = new UserAccount();
+			user.setName("Bernard Chng");
+			user.setEmail("abc@gmail.com");
+			UserAccount successfulUser = userAccountRepository.save(user);
+
+			Wallet wallet = new Wallet();
+			wallet.setUserAccountId(successfulUser.getUserId());
+			wallet.setUserAccount(user);
+			walletRepository.save(wallet);
+
+			AssetAccount usdtAccount = new AssetAccount();
+			usdtAccount.setQuantity(50000);
+			usdtAccount.setAssetId(usdt.getAssetId());
+			usdtAccount.setUserAccountId(successfulUser.getUserId());
+			usdtAccount.setWallet(wallet);
+			assetAccountRepository.save(usdtAccount);
 		};
 	}
 

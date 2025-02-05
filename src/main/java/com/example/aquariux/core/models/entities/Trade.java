@@ -1,5 +1,6 @@
 package com.example.aquariux.core.models.entities;
 
+import com.example.aquariux.order.models.OrderSide;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -21,6 +22,7 @@ public class Trade {
     private Long marketId;
     private double filledPrice;
     private double quantity;
+    private OrderSide orderSide;
     private Long userAccountId;
 
     @CreationTimestamp

@@ -1,8 +1,10 @@
 package com.example.aquariux.market.controllers;
 
 import com.example.aquariux.core.models.markets.MarketTick;
+import com.example.aquariux.exception.InvalidRequestException;
 import com.example.aquariux.market.action.GetMarketTickAction;
-import com.example.aquariux.market.models.responses.CurrentBestPriceResponse;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -17,8 +19,12 @@ public class MarketDataController {
     }
 
     @GetMapping(value = "/{symbol}", produces = "application/json")
-    public @ResponseBody MarketTick getMarketTickBySymbol(@PathVariable String symbol) {
-        return getMarketTickAction.getMarketTickBySymbol(symbol);
+    public @ResponseBody ResponseEntity<?> getMarketTickBySymbol(@PathVariable String symbol) {
+        try {
+            return new ResponseEntity<>(getMarketTickAction.getMarketTickBySymbol(symbol), HttpStatus.OK);
+        } catch (InvalidRequestException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
     }
 
     @GetMapping(produces = "application/json")
@@ -27,7 +33,11 @@ public class MarketDataController {
     }
 
     @GetMapping(value = "/{symbol}/price", produces = "application/json")
-    public @ResponseBody CurrentBestPriceResponse getCurrentBestPrice(@PathVariable String symbol) {
-        return getMarketTickAction.getCurrentBestPriceBySymbol(symbol);
+    public @ResponseBody ResponseEntity<?> getCurrentBestPrice(@PathVariable String symbol) {
+        try {
+            return new ResponseEntity<>(getMarketTickAction.getCurrentBestPriceBySymbol(symbol), HttpStatus.OK);
+        } catch (InvalidRequestException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
     }
 }

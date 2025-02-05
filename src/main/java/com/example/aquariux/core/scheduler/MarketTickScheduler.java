@@ -74,6 +74,7 @@ public class MarketTickScheduler {
                         .build();
                 marketTickMap.put(market.getMarketId(), marketTick);
                 persistMarketTickHistory(marketTick);
+                log.debug("MarketTicker: " + marketTickMap);
             }
 
         } catch (Exception e) {

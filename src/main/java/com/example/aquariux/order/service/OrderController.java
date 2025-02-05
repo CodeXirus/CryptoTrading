@@ -1,10 +1,12 @@
 package com.example.aquariux.order.service;
 
+import com.example.aquariux.exception.InvalidRequestException;
 import com.example.aquariux.order.actions.GetOrderAction;
 import com.example.aquariux.order.actions.ProcessOrderRequestAction;
 import com.example.aquariux.order.models.requests.CreateOrderRequest;
-import com.example.aquariux.order.models.responses.CreateOrderResponse;
 import com.example.aquariux.order.models.responses.OrderResponse;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -22,8 +24,12 @@ public class OrderController {
     }
 
     @PostMapping(produces = "application/json")
-    public CreateOrderResponse postOrderRequest(@RequestBody CreateOrderRequest createOrderRequest, @RequestHeader("USER_ACCOUNT_ID") String userAccountId) {
-        return processOrderRequestAction.processOrder(createOrderRequest, Long.parseLong(userAccountId));
+    public ResponseEntity<?> postOrderRequest(@RequestBody CreateOrderRequest createOrderRequest, @RequestHeader("USER_ACCOUNT_ID") String userAccountId) {
+        try {
+            return new ResponseEntity<>(processOrderRequestAction.processOrder(createOrderRequest, Long.parseLong(userAccountId)), HttpStatus.OK);
+        } catch (InvalidRequestException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
     }
 
     @GetMapping(produces = "application/json")
