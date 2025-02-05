@@ -1,4 +1,4 @@
-package com.example.aquariux.market.service;
+package com.example.aquariux.market.controllers;
 
 import com.example.aquariux.core.models.markets.MarketTick;
 import com.example.aquariux.core.models.markets.SpotMarketTick;
@@ -48,7 +48,7 @@ class MarketDataControllerTest {
     }
 
     @Test
-    void testGetMarketTickBySymbol() throws Exception {
+    void test_get_market_tick_by_symbol_endpoint() throws Exception {
         when(getMarketTickAction.getMarketTickBySymbol(anyString())).thenReturn(sampleMarketTick);
 
         mockMvc.perform(get("/api/markets/tick/BTCUSDT")
@@ -58,7 +58,7 @@ class MarketDataControllerTest {
     }
 
     @Test
-    void testGetAllMarketTick() throws Exception {
+    void test_get_all_market_tick_endpoint() throws Exception {
         List<MarketTick> marketTickList = Arrays.asList(sampleMarketTick);
         when(getMarketTickAction.getAllMarketTicks()).thenReturn(marketTickList);
 
@@ -70,7 +70,7 @@ class MarketDataControllerTest {
     }
 
     @Test
-    void testGetCurrentBestPrice() throws Exception {
+    void test_get_current_best_price_endpoint() throws Exception {
         when(getMarketTickAction.getCurrentBestPriceBySymbol(anyString())).thenReturn(sampleBestPrice);
 
         mockMvc.perform(get("/api/markets/tick/BTCUSDT/price")

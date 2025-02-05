@@ -7,7 +7,9 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
 
+import java.time.Instant;
 import java.util.List;
 
 @Entity
@@ -34,11 +36,14 @@ public class Order {
 
     @Enumerated(EnumType.ORDINAL)
     @Column(nullable = false)
-    private OrderStatus status;
+    private OrderStatus orderStatus;
 
     @Enumerated(EnumType.ORDINAL)
     @Column(nullable = false)
-    private OrderSide side;
+    private OrderSide orderSide;
+
+    @CreationTimestamp
+    private Instant createdAtDatetime;
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Trade> trades;

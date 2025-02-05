@@ -4,11 +4,13 @@ import com.example.aquariux.core.models.entities.Market;
 import com.example.aquariux.core.models.markets.MarketTick;
 import com.example.aquariux.core.repositories.MarketRepository;
 import com.example.aquariux.core.scheduler.MarketTickScheduler;
+import com.example.aquariux.exception.InvalidRequestException;
 import com.example.aquariux.market.models.responses.CurrentBestPriceResponse;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -22,8 +24,11 @@ public class GetMarketTickActionImpl implements GetMarketTickAction {
     }
     @Override
     public MarketTick getMarketTickBySymbol(String symbol) {
-        Market market = marketRepository.findBySymbol(symbol).orElseThrow();
-        return marketTickMap.get(market.getMarketId());
+        Optional<Market> market = marketRepository.findBySymbol(symbol);
+        if (market.isEmpty()) {
+            throw new InvalidRequestException("Invalid market symbol: " + symbol);
+        }
+        return marketTickMap.get(market.get().getMarketId());
     }
 
     @Override
@@ -35,10 +40,13 @@ public class GetMarketTickActionImpl implements GetMarketTickAction {
 
     @Override
     public CurrentBestPriceResponse getCurrentBestPriceBySymbol(String symbol) {
-        Market market = marketRepository.findBySymbol(symbol).orElseThrow();
-        MarketTick marketTick = marketTickMap.get(market.getMarketId());
+        Optional<Market> market = marketRepository.findBySymbol(symbol);
+        if (market.isEmpty()) {
+            throw new InvalidRequestException("Invalid market symbol: " + symbol);
+        }
+        MarketTick marketTick = marketTickMap.get(market.get().getMarketId());
         return CurrentBestPriceResponse.builder()
-                .symbol(market.getSymbol())
+                .symbol(market.get().getSymbol())
                 .bestBidPrice(marketTick.getBidPrice())
                 .bestAskPrice(marketTick.getAskPrice())
                 .build();

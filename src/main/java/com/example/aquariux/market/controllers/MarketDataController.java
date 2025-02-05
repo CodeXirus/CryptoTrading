@@ -1,4 +1,4 @@
-package com.example.aquariux.market.service;
+package com.example.aquariux.market.controllers;
 
 import com.example.aquariux.core.models.markets.MarketTick;
 import com.example.aquariux.market.action.GetMarketTickAction;
