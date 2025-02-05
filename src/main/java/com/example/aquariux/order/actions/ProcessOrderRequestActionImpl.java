@@ -28,9 +28,9 @@ public class ProcessOrderRequestActionImpl implements ProcessOrderRequestAction 
         validateOrder(createOrderRequest);
         validateUser(createOrderRequest, userAccountId);
 
-        Optional<Market> optionalMarket = marketRepository.findBySymbol(createOrderRequest.getSymbol());
+        Optional<Market> optionalMarket = marketRepository.findBySymbol(createOrderRequest.getSymbol().toUpperCase());
         if (optionalMarket.isEmpty()) {
-            throw new InvalidRequestException("Invalid market symbol: " + createOrderRequest.getSymbol());
+            throw new InvalidRequestException("Invalid market symbol: " + createOrderRequest.getSymbol().toUpperCase());
         }
         Market market = optionalMarket.get();
         Order order = new Order();
@@ -56,8 +56,8 @@ public class ProcessOrderRequestActionImpl implements ProcessOrderRequestAction 
 
     private void validateUser(CreateOrderRequest createOrderRequest, long userAccountId) {
         /*
-        Some authentication or compliance check here
-        to determine if user is allowed to trade.
+            Some authentication or compliance check here
+            to determine if user is allowed to trade.
          */
     }
 }

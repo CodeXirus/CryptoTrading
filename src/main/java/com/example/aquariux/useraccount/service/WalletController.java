@@ -18,11 +18,23 @@ public class WalletController {
         this.getAccountBalanceAction = getAccountBalanceAction;
     }
 
+    /*
+        Get all asset account balances belonging to user
+        RequestHeader required: USER_ACCOUNT_ID:String
+        Usually we will derive the user account id from the SessionData or JWT Token.
+        However, we are assuming that the user is already authenticated, hence I am
+        using this header (USER_ACCOUNT_ID) as a replacement.
+     */
     @GetMapping(produces = "application/json")
     public List<AccountBalanceResponse> fetchAllAssetAccountFromWallet(@RequestHeader("USER_ACCOUNT_ID") String userAccountId) {
         return getAccountBalanceAction.getAllAccountBalanceInWallet(Long.parseLong(userAccountId));
     }
 
+    /*
+        Get asset account balance belonging to user by asset symbol
+        Path Parameter: String symbol [USDT]
+        RequestHeader required: USER_ACCOUNT_ID:String
+     */
     @GetMapping(value = "/{symbol}", produces = "application/json")
     public ResponseEntity<?> getAccountBalanceForAsset(@PathVariable String symbol, @RequestHeader("USER_ACCOUNT_ID") String userAccountId) {
         try {

@@ -18,6 +18,10 @@ public class MarketDataController {
         this.getMarketTickAction = getMarketTickAction;
     }
 
+    /*
+        Fetch market tick by market symbol.
+        Path Parameter: String symbol [BTCUSDT]
+     */
     @GetMapping(value = "/{symbol}", produces = "application/json")
     public @ResponseBody ResponseEntity<?> getMarketTickBySymbol(@PathVariable String symbol) {
         try {
@@ -27,11 +31,18 @@ public class MarketDataController {
         }
     }
 
+    /*
+        Fetch all market ticks.
+     */
     @GetMapping(produces = "application/json")
     public @ResponseBody List<MarketTick> getAllMarketTick() {
         return getMarketTickAction.getAllMarketTicks();
     }
 
+    /*
+        Fetch current best price for market
+        Path Parameter: String symbol [BTCUSDT]
+     */
     @GetMapping(value = "/{symbol}/price", produces = "application/json")
     public @ResponseBody ResponseEntity<?> getCurrentBestPrice(@PathVariable String symbol) {
         try {

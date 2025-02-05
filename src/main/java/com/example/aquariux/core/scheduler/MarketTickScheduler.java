@@ -48,19 +48,34 @@ public class MarketTickScheduler {
         this.marketTickMap = new HashMap<>();
     }
 
+    /*
+        Initial delay of 5seconds for Database to be populated on startup.
+        Poll market ticker from Binance and Huobi on 10 seconds interval.
+        Market Tickers will be persisted into Database for historical reads.
+     */
     @Scheduled(fixedRate = 10000, initialDelay = 5000)
     public void pollMarketTicks() {
-        try {
             List<Market> marketList = marketRepository.findAll();
             Set<String> symbolSet = new HashSet<>();
             for (Market market : marketList) {
                 symbolSet.add(market.getSymbol());
             }
-            Map<String, BinanceTicker> binanceTickersMap = fetchBinanceTickers(symbolSet);
-            Map<String, HuobiTicker> huobiTickersMap = fetchHuobiTickers(symbolSet);
+            Map<String, BinanceTicker> binanceTickersMap = new HashMap<>();
+            Map<String, HuobiTicker> huobiTickersMap = new HashMap<>();
+            try {
+                binanceTickersMap = fetchBinanceTickers(symbolSet);
+            } catch (Exception e) {
+                log.warn("Failed to fetch market ticker from Binance.");
+            }
+            try {
+                huobiTickersMap = fetchHuobiTickers(symbolSet);
+            } catch (Exception e) {
+                log.warn("Failed to fetch market ticker from Huobi.");
+            }
+
             for (Market market : marketList) {
-                HuobiTicker huobiTicker = huobiTickersMap.get(market.getSymbol().toUpperCase());
-                BinanceTicker binanceTicker = binanceTickersMap.get(market.getSymbol().toUpperCase());
+                HuobiTicker huobiTicker = huobiTickersMap.getOrDefault(market.getSymbol().toUpperCase(), new HuobiTicker());
+                BinanceTicker binanceTicker = binanceTickersMap.getOrDefault(market.getSymbol().toUpperCase(), new BinanceTicker());
                 MarketTick marketTick = SpotMarketTick.builder()
                         .marketId(market.getMarketId())
                         .baseAssetId(market.getBaseAssetId())
@@ -76,10 +91,6 @@ public class MarketTickScheduler {
                 persistMarketTickHistory(marketTick);
                 log.debug("MarketTicker: " + marketTickMap);
             }
-
-        } catch (Exception e) {
-            log.warn("Failed to poll market ticker.", e);
-        }
     }
 
     public Map<Long, MarketTick> getAllMarketTicks() {

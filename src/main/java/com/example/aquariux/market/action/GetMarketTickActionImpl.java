@@ -24,7 +24,7 @@ public class GetMarketTickActionImpl implements GetMarketTickAction {
     }
     @Override
     public MarketTick getMarketTickBySymbol(String symbol) {
-        Optional<Market> market = marketRepository.findBySymbol(symbol);
+        Optional<Market> market = marketRepository.findBySymbol(symbol.toUpperCase());
         if (market.isEmpty()) {
             throw new InvalidRequestException("Invalid market symbol: " + symbol);
         }
@@ -40,9 +40,9 @@ public class GetMarketTickActionImpl implements GetMarketTickAction {
 
     @Override
     public CurrentBestPriceResponse getCurrentBestPriceBySymbol(String symbol) {
-        Optional<Market> market = marketRepository.findBySymbol(symbol);
+        Optional<Market> market = marketRepository.findBySymbol(symbol.toUpperCase());
         if (market.isEmpty()) {
-            throw new InvalidRequestException("Invalid market symbol: " + symbol);
+            throw new InvalidRequestException("Invalid market symbol: " + symbol.toUpperCase());
         }
         MarketTick marketTick = marketTickMap.get(market.get().getMarketId());
         return CurrentBestPriceResponse.builder()

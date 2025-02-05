@@ -23,8 +23,15 @@ public class OrderController {
         this.getOrderAction = getOrderAction;
     }
 
+    /*
+        Create order request.
+        RequestHeader required: USER_ACCOUNT_ID:String
+        Usually we will derive the user account id from the SessionData or JWT Token.
+        However, we are assuming that the user is already authenticated, hence I am
+        using this header (USER_ACCOUNT_ID) as a replacement.
+     */
     @PostMapping(produces = "application/json")
-    public ResponseEntity<?> postOrderRequest(@RequestBody CreateOrderRequest createOrderRequest, @RequestHeader("USER_ACCOUNT_ID") String userAccountId) {
+    public ResponseEntity<?> createOrderRequest(@RequestBody CreateOrderRequest createOrderRequest, @RequestHeader("USER_ACCOUNT_ID") String userAccountId) {
         try {
             return new ResponseEntity<>(processOrderRequestAction.processOrder(createOrderRequest, Long.parseLong(userAccountId)), HttpStatus.OK);
         } catch (InvalidRequestException e) {
@@ -32,11 +39,20 @@ public class OrderController {
         }
     }
 
+    /*
+        Get all orders belonging to user
+        RequestHeader required: USER_ACCOUNT_ID:String
+     */
     @GetMapping(produces = "application/json")
     public List<OrderResponse> getOrders(@RequestHeader("USER_ACCOUNT_ID") String userAccountId) {
         return getOrderAction.getAllOrders(Long.parseLong(userAccountId));
     }
 
+    /*
+        Get order by order id
+        Path Parameter: String orderId ["123"]
+        RequestHeader required: USER_ACCOUNT_ID:String
+     */
     @GetMapping(value = "/{orderId}", produces = "application/json")
     public OrderResponse getOrderById(@PathVariable String orderId, @RequestHeader("USER_ACCOUNT_ID") String userAccountId) {
         return getOrderAction.getOrderById(orderId, userAccountId);
