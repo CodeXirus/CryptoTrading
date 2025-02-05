@@ -7,4 +7,5 @@ import java.util.List;
 public interface GetTradeAction {
     List<TradeResponse> getAllTradeHistories(long userAccountId);
     TradeResponse getTradeHistoryById(long tradeId, long userAccountId);
+    List<TradeResponse> getAllTradesByMarketSymbol(String symbol, long userAccountId);
 }

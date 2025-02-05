@@ -11,4 +11,5 @@ import java.util.Optional;
 public interface TradeRepository extends JpaRepository<Trade, Long> {
     List<Trade> findAllByUserAccountId(long userAccountId);
     Optional<Trade> findByTradeIdAndUserAccountId(long tradeId, long userAccountId);
+    List<Trade> findAllByMarketIdAndUserAccountId(long marketId, long userAccountId);
 }

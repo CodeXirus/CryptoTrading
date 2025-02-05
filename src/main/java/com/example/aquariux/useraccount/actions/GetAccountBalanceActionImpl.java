@@ -38,7 +38,7 @@ public class GetAccountBalanceActionImpl implements GetAccountBalanceAction {
 
     @Override
     public AccountBalanceResponse getAccountBalanceByAssetSymbolAndUserAccountId(String symbol, long userAccountId) {
-        Asset asset = assetRepository.findBySymbol(symbol);
+        Asset asset = assetRepository.findBySymbol(symbol.toUpperCase());
         Optional<AssetAccount> assetAccount = assetAccountRepository.findByUserAccountIdAndAssetId(userAccountId, asset.getAssetId());
         if(assetAccount.isPresent()) {
             return transformToResponse(assetAccount.get());

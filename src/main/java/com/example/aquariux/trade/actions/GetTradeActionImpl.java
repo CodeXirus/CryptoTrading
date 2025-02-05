@@ -7,6 +7,7 @@ import com.example.aquariux.core.repositories.TradeRepository;
 import com.example.aquariux.trade.models.TradeResponse;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -35,6 +36,19 @@ public class GetTradeActionImpl implements GetTradeAction {
             return null;
         }
         return transformTrade(trade.get());
+    }
+
+    @Override
+    public List<TradeResponse> getAllTradesByMarketSymbol(String symbol, long userAccountId) {
+        Optional<Market> market = marketRepository.findBySymbol(symbol.toUpperCase());
+        if (market.isPresent()) {
+            List<Trade> tradeList = tradeRepository.findAllByMarketIdAndUserAccountId(market.get().getMarketId(), userAccountId);
+            return tradeList.stream()
+                    .map(this::transformTrade)
+                    .toList();
+        } else {
+            return Collections.emptyList();
+        }
     }
 
     private TradeResponse transformTrade(Trade trade) {

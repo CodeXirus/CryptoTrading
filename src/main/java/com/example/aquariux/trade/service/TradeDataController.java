@@ -22,7 +22,7 @@ public class TradeDataController {
         However, we are assuming that the user is already authenticated, hence I am
         using this header (USER_ACCOUNT_ID) as a replacement.
      */
-    @GetMapping(produces = "application/json")
+    @GetMapping(value = "/all", produces = "application/json")
     public List<TradeResponse> getAllTradeHistory(@RequestHeader("USER_ACCOUNT_ID") String userAccountId) {
         return getTradeAction.getAllTradeHistories(Long.parseLong(userAccountId));
     }
@@ -35,5 +35,15 @@ public class TradeDataController {
     @GetMapping(value = "/{tradeId}", produces = "application/json")
     public TradeResponse getTradeHistoryById(@PathVariable String tradeId, @RequestHeader("USER_ACCOUNT_ID") String userAccountId) {
         return getTradeAction.getTradeHistoryById(Long.parseLong(tradeId), Long.parseLong(userAccountId));
+    }
+
+    /*
+        Get trade by trade id
+        Query Parameter: String symbol ["BTCUSDT"]
+        RequestHeader required: USER_ACCOUNT_ID:String
+     */
+    @GetMapping(produces = "application/json")
+    public List<TradeResponse> getTradeHistoryByMarketSymbol(@RequestParam String symbol, @RequestHeader("USER_ACCOUNT_ID") String userAccountId) {
+        return getTradeAction.getAllTradesByMarketSymbol(symbol, Long.parseLong(userAccountId));
     }
 }

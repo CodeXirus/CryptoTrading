@@ -1,8 +1,8 @@
 package com.example.aquariux.market.controllers;
 
-import com.example.aquariux.core.models.markets.MarketTick;
 import com.example.aquariux.exception.InvalidRequestException;
 import com.example.aquariux.market.action.GetMarketTickAction;
+import com.example.aquariux.market.models.responses.MarketTickResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -35,7 +35,7 @@ public class MarketDataController {
         Fetch all market ticks.
      */
     @GetMapping(produces = "application/json")
-    public @ResponseBody List<MarketTick> getAllMarketTick() {
+    public @ResponseBody List<MarketTickResponse> getAllMarketTick() {
         return getMarketTickAction.getAllMarketTicks();
     }
 
