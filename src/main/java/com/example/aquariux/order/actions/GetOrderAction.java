@@ -6,6 +6,6 @@ import java.util.List;
 
 public interface GetOrderAction {
 
-    OrderResponse getOrderById(String orderId, String userAccountId);
+    OrderResponse getOrderById(long orderId, long userAccountId);
     List<OrderResponse> getAllOrders(long userAccountId);
 }

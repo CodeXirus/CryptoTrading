@@ -4,12 +4,9 @@ import com.example.aquariux.exception.InvalidRequestException;
 import com.example.aquariux.order.actions.GetOrderAction;
 import com.example.aquariux.order.actions.ProcessOrderRequestAction;
 import com.example.aquariux.order.models.requests.CreateOrderRequest;
-import com.example.aquariux.order.models.responses.OrderResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("api/orders")
@@ -36,6 +33,8 @@ public class OrderController {
             return new ResponseEntity<>(processOrderRequestAction.processOrder(createOrderRequest, Long.parseLong(userAccountId)), HttpStatus.OK);
         } catch (InvalidRequestException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        } catch (NumberFormatException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("userAccountId must be numeric.");
         }
     }
 
@@ -44,8 +43,12 @@ public class OrderController {
         RequestHeader required: USER_ACCOUNT_ID:String
      */
     @GetMapping(produces = "application/json")
-    public List<OrderResponse> getOrders(@RequestHeader("USER_ACCOUNT_ID") String userAccountId) {
-        return getOrderAction.getAllOrders(Long.parseLong(userAccountId));
+    public ResponseEntity<?> getOrders(@RequestHeader("USER_ACCOUNT_ID") String userAccountId) {
+        try {
+            return new ResponseEntity<>(getOrderAction.getAllOrders(Long.parseLong(userAccountId)), HttpStatus.OK);
+        } catch (NumberFormatException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("userAccountId must be numeric.");
+        }
     }
 
     /*
@@ -54,7 +57,11 @@ public class OrderController {
         RequestHeader required: USER_ACCOUNT_ID:String
      */
     @GetMapping(value = "/{orderId}", produces = "application/json")
-    public OrderResponse getOrderById(@PathVariable String orderId, @RequestHeader("USER_ACCOUNT_ID") String userAccountId) {
-        return getOrderAction.getOrderById(orderId, userAccountId);
+    public ResponseEntity<?> getOrderById(@PathVariable String orderId, @RequestHeader("USER_ACCOUNT_ID") String userAccountId) {
+        try {
+            return new ResponseEntity<>(getOrderAction.getOrderById(Long.parseLong(orderId), Long.parseLong(userAccountId)), HttpStatus.OK);
+        } catch (NumberFormatException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("tradeId or userAccountId must be numeric.");
+        }
     }
 }

@@ -1,10 +1,9 @@
 package com.example.aquariux.trade.service;
 
 import com.example.aquariux.trade.actions.GetTradeAction;
-import com.example.aquariux.trade.models.TradeResponse;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("api/trades")
@@ -23,8 +22,12 @@ public class TradeDataController {
         using this header (USER_ACCOUNT_ID) as a replacement.
      */
     @GetMapping(value = "/all", produces = "application/json")
-    public List<TradeResponse> getAllTradeHistory(@RequestHeader("USER_ACCOUNT_ID") String userAccountId) {
-        return getTradeAction.getAllTradeHistories(Long.parseLong(userAccountId));
+    public ResponseEntity<?> getAllTradeHistory(@RequestHeader("USER_ACCOUNT_ID") String userAccountId) {
+        try {
+            return new ResponseEntity<>(getTradeAction.getAllTradeHistories(Long.parseLong(userAccountId)), HttpStatus.OK);
+        } catch (NumberFormatException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("userAccountId must be numeric.");
+        }
     }
 
     /*
@@ -33,8 +36,12 @@ public class TradeDataController {
         RequestHeader required: USER_ACCOUNT_ID:String
      */
     @GetMapping(value = "/{tradeId}", produces = "application/json")
-    public TradeResponse getTradeHistoryById(@PathVariable String tradeId, @RequestHeader("USER_ACCOUNT_ID") String userAccountId) {
-        return getTradeAction.getTradeHistoryById(Long.parseLong(tradeId), Long.parseLong(userAccountId));
+    public ResponseEntity<?> getTradeHistoryById(@PathVariable String tradeId, @RequestHeader("USER_ACCOUNT_ID") String userAccountId) {
+        try {
+            return new ResponseEntity<>(getTradeAction.getTradeHistoryById(Long.parseLong(tradeId), Long.parseLong(userAccountId)), HttpStatus.OK);
+        } catch (NumberFormatException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("tradeId or userAccountId must be numeric.");
+        }
     }
 
     /*
@@ -43,7 +50,11 @@ public class TradeDataController {
         RequestHeader required: USER_ACCOUNT_ID:String
      */
     @GetMapping(produces = "application/json")
-    public List<TradeResponse> getTradeHistoryByMarketSymbol(@RequestParam String symbol, @RequestHeader("USER_ACCOUNT_ID") String userAccountId) {
-        return getTradeAction.getAllTradesByMarketSymbol(symbol, Long.parseLong(userAccountId));
+    public ResponseEntity<?> getTradeHistoryByMarketSymbol(@RequestParam String symbol, @RequestHeader("USER_ACCOUNT_ID") String userAccountId) {
+        try {
+            return new ResponseEntity<>(getTradeAction.getAllTradesByMarketSymbol(symbol, Long.parseLong(userAccountId)), HttpStatus.OK);
+        } catch (NumberFormatException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("userAccountId must be numeric.");
+        }
     }
 }

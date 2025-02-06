@@ -23,8 +23,8 @@ public class GetOrderActionImpl implements GetOrderAction {
     }
 
     @Override
-    public OrderResponse getOrderById(String orderId, String userAccountId) {
-        Optional<Order> order = orderRepository.findByOrderIdAndUserAccountId(Long.parseLong(orderId), Long.parseLong(userAccountId));
+    public OrderResponse getOrderById(long orderId, long userAccountId) {
+        Optional<Order> order = orderRepository.findByOrderIdAndUserAccountId(orderId, userAccountId);
         if(order.isEmpty()) {
             return null;
         }

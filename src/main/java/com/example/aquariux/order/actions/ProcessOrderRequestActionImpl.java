@@ -2,7 +2,9 @@ package com.example.aquariux.order.actions;
 
 import com.example.aquariux.core.models.entities.Market;
 import com.example.aquariux.core.models.entities.Order;
+import com.example.aquariux.core.models.entities.UserAccount;
 import com.example.aquariux.core.repositories.MarketRepository;
+import com.example.aquariux.core.repositories.UserAccountRepository;
 import com.example.aquariux.core.service.TradingCore;
 import com.example.aquariux.exception.InvalidRequestException;
 import com.example.aquariux.order.models.requests.CreateOrderRequest;
@@ -17,11 +19,14 @@ import java.util.Optional;
 public class ProcessOrderRequestActionImpl implements ProcessOrderRequestAction {
     private TradingCore tradingCore;
     private MarketRepository marketRepository;
+    private UserAccountRepository userAccountRepository;
 
     public ProcessOrderRequestActionImpl(TradingCore tradingCore,
-                                         MarketRepository marketRepository) {
+                                         MarketRepository marketRepository,
+                                         UserAccountRepository userAccountRepository) {
         this.tradingCore = tradingCore;
         this.marketRepository = marketRepository;
+        this.userAccountRepository = userAccountRepository;
     }
 
     public CreateOrderResponse processOrder(CreateOrderRequest createOrderRequest, long userAccountId) {
@@ -36,7 +41,11 @@ public class ProcessOrderRequestActionImpl implements ProcessOrderRequestAction 
         Order order = new Order();
         order.setMarketId(market.getMarketId());
         order.setUserAccountId(userAccountId);
-        order.setQuantity(Double.parseDouble(createOrderRequest.getQuantity()));
+        try {
+            order.setQuantity(Double.parseDouble(createOrderRequest.getQuantity()));
+        } catch (NumberFormatException e) {
+            throw new InvalidRequestException("Quantity must be numeric.");
+        }
         order.setOrderType(OrderType.valueOf(createOrderRequest.getType().toUpperCase()));
         order.setOrderSide(OrderSide.valueOf(createOrderRequest.getSide().toUpperCase()));
         return tradingCore.executeOrder(order);
@@ -59,5 +68,9 @@ public class ProcessOrderRequestActionImpl implements ProcessOrderRequestAction 
             Some authentication or compliance check here
             to determine if user is allowed to trade.
          */
+        Optional<UserAccount> userAccount = userAccountRepository.findById(userAccountId);
+        if (userAccount.isEmpty()) {
+            throw new InvalidRequestException("Invalid user account id.");
+        }
     }
 }

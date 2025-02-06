@@ -53,7 +53,7 @@ public class MarketTickScheduler {
         Poll market ticker from Binance and Huobi on 10 seconds interval.
         Market Tickers will be persisted into Database for historical reads.
      */
-    @Scheduled(fixedRate = 10000, initialDelay = 5000)
+    @Scheduled(fixedRate = 10000, initialDelay = 4000)
     public void pollMarketTicks() {
             List<Market> marketList = marketRepository.findAll();
             Set<String> symbolSet = new HashSet<>();
@@ -89,8 +89,8 @@ public class MarketTickScheduler {
                         .build();
                 marketTickMap.put(market.getMarketId(), marketTick);
                 persistMarketTickHistory(marketTick);
-                log.debug("MarketTicker: " + marketTickMap);
             }
+        log.debug("MarketTicker: " + marketTickMap);
     }
 
     public Map<Long, MarketTick> getAllMarketTicks() {

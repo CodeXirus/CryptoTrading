@@ -2,7 +2,9 @@ package com.example.aquariux.order;
 
 import com.example.aquariux.core.models.entities.Market;
 import com.example.aquariux.core.models.entities.Order;
+import com.example.aquariux.core.models.entities.UserAccount;
 import com.example.aquariux.core.repositories.MarketRepository;
+import com.example.aquariux.core.repositories.UserAccountRepository;
 import com.example.aquariux.core.service.TradingCore;
 import com.example.aquariux.order.actions.ProcessOrderRequestActionImpl;
 import com.example.aquariux.order.models.requests.CreateOrderRequest;
@@ -32,9 +34,13 @@ class ProcessOrderRequestActionTest {
     @Mock
     private MarketRepository marketRepository;
 
+    @Mock
+    private UserAccountRepository userAccountRepository;
+
     private CreateOrderRequest createOrderRequest;
     private Market market;
     private Order order;
+    private UserAccount userAccount;
     private CreateOrderResponse createOrderResponse;
 
     @BeforeEach
@@ -55,9 +61,15 @@ class ProcessOrderRequestActionTest {
         order.setMarketId(1L);
         order.setUserAccountId(1L);
 
+        userAccount = new UserAccount();
+        userAccount.setUserId(1L);
+        userAccount.setName("testUser");
+        userAccount.setEmail("test@gmail.com");
+
         createOrderResponse = new CreateOrderResponse();
 
         when(marketRepository.findBySymbol(any())).thenReturn(Optional.of(market));
+        when(userAccountRepository.findById(any())).thenReturn(Optional.of(userAccount));
         when(tradingCore.executeOrder(any())).thenReturn(createOrderResponse);
     }
 
